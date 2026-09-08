@@ -2,7 +2,7 @@
 // CONFIGURACIÓN DE BACKEND
 // Si usas Vercel + Render, pon aquí la URL de tu backend en Render
 // Ejemplo: const BACKEND_URL = 'https://puro-vicio-backend.onrender.com';
-const BACKEND_URL = ''; // Dejar vacío para uso local
+const BACKEND_URL = 'https://puro-vicio-backend.onrender.com'; // Dejar vacío para uso local
 // ==========================================
 
 const socket = typeof io !== 'undefined' ? io(BACKEND_URL || undefined) : null;
