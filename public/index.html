@@ -72,18 +72,20 @@
   </section>
 
   <section id="screen-join" class="screen">
-    <h1 class="logo">Puro Vicio</h1>
-    <p class="logo-subtitle"> Entra a la Sala 👥</p>
+    <h1 class="logo logo-sm">Puro Vicio</h1>
+    <p class="logo-subtitle">Entra a la Sala 👥</p>
 
     <div class="glass-card text-center">
-      <div class="input-group" style="margin-bottom: 12px;">
-        <input type="text" id="join-code-input" class="input-text" placeholder="Código (ej. VIC-A1B2)" maxlength="10"
-          style="text-transform: uppercase;" autocomplete="off" />
-      </div>
+      <div id="join-form" style="width: 100%;">
+        <div class="input-group" style="margin-bottom: 12px;">
+          <input type="text" id="join-code-input" class="input-text" placeholder="Código (ej. VIC-A1B2)" maxlength="10"
+            style="text-transform: uppercase;" autocomplete="off" />
+        </div>
 
-      <div class="input-group" style="margin-bottom: 16px;">
-        <input type="text" id="join-name-input" class="input-text" placeholder="Tu Nombre..." maxlength="20"
-          autocomplete="off" />
+        <div class="input-group" style="margin-bottom: 16px;">
+          <input type="text" id="join-name-input" class="input-text" placeholder="Tu Nombre..." maxlength="20"
+            autocomplete="off" />
+        </div>
       </div>
 
       <div id="join-error" class="setup-error" role="alert"></div>
@@ -91,6 +93,14 @@
       <button id="btn-submit-join" class="btn-start ready" style="margin-bottom: 10px;">
         UNIRME A LA FIESTA 🎉
       </button>
+
+      <div id="join-status-section" class="hidden" style="width: 100%; margin-bottom: 12px;">
+        <h3 class="section-label">Jugadores Conectados:</h3>
+        <div class="player-list-container player-list-lobby">
+          <ul id="join-player-list" class="player-list"></ul>
+        </div>
+        <p id="join-player-count" class="player-count">0/10 jugadores</p>
+      </div>
 
       <button id="btn-leave-room" class="btn-start hidden" style="background: rgba(239, 68, 68, 0.2); color: #ef4444; border: 1px solid rgba(239,68,68,0.4); margin-bottom: 10px; padding: 10px;">
         🚪 Salir de la Sala

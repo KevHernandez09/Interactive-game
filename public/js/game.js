@@ -106,6 +106,10 @@ const UI = {
     this.els.btnLeaveRoom = document.getElementById('btn-leave-room');
     this.els.btnLeaveGame = document.getElementById('btn-leave-game');
     this.els.joinError = document.getElementById('join-error');
+    this.els.joinForm = document.getElementById('join-form');
+    this.els.joinStatusSection = document.getElementById('join-status-section');
+    this.els.joinPlayerList = document.getElementById('join-player-list');
+    this.els.joinPlayerCount = document.getElementById('join-player-count');
 
     this.els.playerInput = document.getElementById('player-name-input');
     this.els.addPlayerBtn = document.getElementById('btn-add-player');
@@ -163,6 +167,7 @@ const UI = {
       if (Game.isSocketMode && socket && Game.roomCode) {
         socket.emit('leave_room', { roomCode: Game.roomCode });
       }
+      this._resetJoinUI();
       Game.reset();
       this.showScreen('mode');
     };
@@ -250,6 +255,8 @@ const UI = {
       Game.myPlayerName = playerName;
       this.showScreen('join');
       if (this.els.btnSubmitJoin) this.els.btnSubmitJoin.classList.add('hidden');
+      if (this.els.joinForm) this.els.joinForm.classList.add('hidden');
+      if (this.els.joinStatusSection) this.els.joinStatusSection.classList.remove('hidden');
       if (this.els.btnLeaveRoom) this.els.btnLeaveRoom.classList.remove('hidden');
       this.els.joinError.textContent = '✅ ¡Te uniste! Esperando que el Host inicie...';
       this.els.joinError.style.color = '#39ff14';
@@ -258,11 +265,13 @@ const UI = {
 
     socket.on('kicked_from_room', ({ reason }) => {
       alert(reason || 'Fuiste eliminado de la sala por el Host.');
+      this._resetJoinUI();
       Game.reset();
       this.showScreen('mode');
     });
 
     socket.on('left_room_successfully', () => {
+      this._resetJoinUI();
       Game.reset();
       this.showScreen('mode');
     });
@@ -276,26 +285,51 @@ const UI = {
     socket.on('room_updated', ({ players, canStart }) => {
       Game.players = players;
 
-      this.els.hostPlayerList.innerHTML = '';
-      players.forEach((name, i) => {
-        const li = document.createElement('li');
-        li.className = 'player-item';
-        li.innerHTML = `
-          <span class="player-item-name">
-            <span class="player-avatar">${name.charAt(0).toUpperCase()}</span>
-            ${name}
-          </span>
-          ${Game.isHost ? `<button class="btn-remove" onclick="UI._kickPlayer('${name}')" title="Eliminar jugador">✕</button>` : ''}
-        `;
-        this.els.hostPlayerList.appendChild(li);
-      });
+      // Render for host
+      if (this.els.hostPlayerList) {
+        this.els.hostPlayerList.innerHTML = '';
+        players.forEach((name) => {
+          const li = document.createElement('li');
+          li.className = 'player-item';
+          const isMe = name === Game.myPlayerName;
+          li.innerHTML = `
+            <span class="player-item-name">
+              <span class="player-avatar">${name.charAt(0).toUpperCase()}</span>
+              <span>${name} ${isMe ? '<strong style="color:var(--neon-cyan); font-size:0.8rem;">(Tú)</strong>' : ''}</span>
+            </span>
+            ${Game.isHost ? `<button class="btn-remove" onclick="UI._kickPlayer('${name}')" title="Eliminar jugador">✕</button>` : ''}
+          `;
+          this.els.hostPlayerList.appendChild(li);
+        });
+      }
 
-      this.els.hostPlayerCount.textContent = `${players.length}/10 jugadores`;
-      this.els.btnHostStart.disabled = !canStart;
-      if (canStart) {
-        this.els.btnHostStart.classList.add('ready');
-      } else {
-        this.els.btnHostStart.classList.remove('ready');
+      // Render for join screen
+      if (this.els.joinPlayerList) {
+        this.els.joinPlayerList.innerHTML = '';
+        players.forEach((name) => {
+          const li = document.createElement('li');
+          li.className = 'player-item';
+          const isMe = name === Game.myPlayerName;
+          li.innerHTML = `
+            <span class="player-item-name">
+              <span class="player-avatar">${name.charAt(0).toUpperCase()}</span>
+              <span>${name} ${isMe ? '<strong style="color:var(--neon-cyan); font-size:0.8rem;">(Tú)</strong>' : ''}</span>
+            </span>
+          `;
+          this.els.joinPlayerList.appendChild(li);
+        });
+      }
+
+      if (this.els.hostPlayerCount) this.els.hostPlayerCount.textContent = `${players.length}/10 jugadores`;
+      if (this.els.joinPlayerCount) this.els.joinPlayerCount.textContent = `${players.length}/10 jugadores`;
+
+      if (this.els.btnHostStart) {
+        this.els.btnHostStart.disabled = !canStart;
+        if (canStart) {
+          this.els.btnHostStart.classList.add('ready');
+        } else {
+          this.els.btnHostStart.classList.remove('ready');
+        }
       }
     });
 
@@ -354,6 +388,17 @@ const UI = {
   _kickPlayer(playerName) {
     if (Game.isHost && socket && Game.roomCode) {
       socket.emit('kick_player', { roomCode: Game.roomCode, playerName });
+    }
+  },
+
+  _resetJoinUI() {
+    if (this.els.joinForm) this.els.joinForm.classList.remove('hidden');
+    if (this.els.joinStatusSection) this.els.joinStatusSection.classList.add('hidden');
+    if (this.els.btnSubmitJoin) this.els.btnSubmitJoin.classList.remove('hidden');
+    if (this.els.btnLeaveRoom) this.els.btnLeaveRoom.classList.add('hidden');
+    if (this.els.joinError) {
+      this.els.joinError.textContent = '';
+      this.els.joinError.classList.remove('visible');
     }
   },
 
