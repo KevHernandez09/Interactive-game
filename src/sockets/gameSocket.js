@@ -174,10 +174,48 @@ function initSockets(io, baseFrontendUrl) {
       playerHistory.push(finalCategory);
       room.history[currentPlayerName] = playerHistory;
 
+      // 15% chance for a Special Card
+      const isSpecial = Math.random() < 0.15;
+      if (isSpecial) {
+        const types = ['trago_solidario', 'inmunidad', 'el_juicio'];
+        const specialType = types[Math.floor(Math.random() * types.length)];
+        let cardText = '';
+        let cardLevelLabel = '';
+
+        if (specialType === 'trago_solidario') {
+          cardLevelLabel = '🍹 TRAGO SOLIDARIO';
+          cardText = '¡Salud por la amistad! Te tomas un SHOT de castigo, pero obligas a otro jugador de la mesa a tomarse otro contigo 🍹.';
+        } else if (specialType === 'inmunidad') {
+          cardLevelLabel = '🛡️ INMUNIDAD DIVINA';
+          cardText = '¡La diosa fortuna te premia! Ganas 1 Carta de Inmunidad Divina. Puedes usarla más adelante para liberarte de un reto o verdad sin tomar shot 🛡️.';
+          if (!room.immunity) room.immunity = {};
+          room.immunity[currentPlayerName] = (room.immunity[currentPlayerName] || 0) + 1;
+        } else {
+          cardLevelLabel = '⚖️ EL JUICIO';
+          const levels = ['bajo', 'medio', 'alto'];
+          const randomLevel = levels[Math.floor(Math.random() * levels.length)];
+          const fakeReq = { query: { category: finalCategory, level: randomLevel, roomCode } };
+          let rawCardText = '¿Cuál es tu mayor secreto?';
+          const fakeRes = { status: () => fakeRes, json: (data) => { if (data && data.text) rawCardText = data.text; } };
+          cardsController.getRandomCard(fakeReq, fakeRes);
+          cardText = `¡TÚ ERES EL JUEZ! ⚖️ No te toca a ti: Elige a cualquier otro jugador de la mesa para que cumpla lo siguiente:\n\n👉 "${rawCardText}"`;
+        }
+
+        io.to(roomCode).emit('spin_and_reveal', {
+          category: 'especial',
+          level: cardLevelLabel,
+          text: cardText,
+          specialType,
+          currentPlayer: currentPlayerName,
+          immunityCount: (room.immunity && room.immunity[currentPlayerName]) || 0
+        });
+        return;
+      }
+
       const levels = ['bajo', 'medio', 'alto'];
       const randomLevel = levels[Math.floor(Math.random() * levels.length)];
 
-      const fakeReq = { query: { category: finalCategory, level: randomLevel } };
+      const fakeReq = { query: { category: finalCategory, level: randomLevel, roomCode } };
       let cardText = '¿Cuál es tu mayor secreto?';
 
       const fakeRes = {
@@ -195,7 +233,27 @@ function initSockets(io, baseFrontendUrl) {
         category: finalCategory,
         level: randomLevel,
         text: cardText,
-        currentPlayer: currentPlayerName
+        specialType: null,
+        currentPlayer: currentPlayerName,
+        immunityCount: (room.immunity && room.immunity[currentPlayerName]) || 0
+      });
+    });
+
+    socket.on('use_immunity', ({ roomCode }) => {
+      const room = rooms.get(roomCode);
+      if (!room) return;
+
+      const currentPlayerName = room.players[room.currentTurnIndex]?.name;
+      if (!room.immunity) room.immunity = {};
+      if ((room.immunity[currentPlayerName] || 0) > 0) {
+        room.immunity[currentPlayerName]--;
+      }
+
+      room.currentTurnIndex = (room.currentTurnIndex + 1) % room.players.length;
+
+      io.to(roomCode).emit('action_completed', {
+        nextPlayer: room.players[room.currentTurnIndex].name,
+        turnIndex: room.currentTurnIndex
       });
     });
 

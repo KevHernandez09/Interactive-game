@@ -16,6 +16,7 @@ const Game = {
   roomCode: null,
   myPlayerName: null,
   history: {},
+  immunity: {},
 
   addPlayer(name) {
     const trimmed = name.trim();
@@ -41,6 +42,7 @@ const Game = {
     this.currentPlayerIndex = 0;
     this.isRunning = true;
     this.history = {};
+    this.immunity = {};
     CardUtils.resetUsedCards();
     return true;
   },
@@ -68,6 +70,25 @@ const Game = {
     return null;
   },
 
+  addImmunity(playerName) {
+    if (!playerName) return;
+    this.immunity[playerName] = (this.immunity[playerName] || 0) + 1;
+  },
+
+  getImmunity(playerName) {
+    if (!playerName) return 0;
+    return this.immunity[playerName] || 0;
+  },
+
+  useImmunity(playerName) {
+    if (!playerName) return false;
+    if ((this.immunity[playerName] || 0) > 0) {
+      this.immunity[playerName]--;
+      return true;
+    }
+    return false;
+  },
+
   getCurrentPlayer() {
     return this.players[this.currentPlayerIndex];
   },
@@ -77,9 +98,31 @@ const Game = {
   },
 
   async pickCard(category) {
+    // 15% chance for a Special Card
+    if (Math.random() < 0.15) {
+      const specialTypes = ['trago_solidario', 'inmunidad', 'el_juicio'];
+      const chosenType = specialTypes[Math.floor(Math.random() * specialTypes.length)];
+      
+      let text = '';
+      let label = '';
+      if (chosenType === 'trago_solidario') {
+        label = '🍹 TRAGO SOLIDARIO';
+        text = '¡Salud por la amistad! Te tomas un SHOT de castigo, pero obligas a otro jugador de la mesa a tomarse otro contigo 🍹.';
+      } else if (chosenType === 'inmunidad') {
+        label = '🛡️ INMUNIDAD DIVINA';
+        text = '¡La diosa fortuna te premia! Ganas 1 Carta de Inmunidad Divina. Puedes usarla más adelante para liberarte de un reto o verdad sin tomar shot 🛡️.';
+      } else {
+        label = '⚖️ EL JUICIO';
+        const rawCardText = await CardUtils.fetchCardFromAPI(category, CardUtils.getRandomLevel(), this.roomCode);
+        text = `¡TÚ ERES EL JUEZ! ⚖️ No te toca a ti: Elige a cualquier otro jugador de la mesa para que cumpla lo siguiente:\n\n👉 "${rawCardText}"`;
+      }
+
+      return { category: 'especial', level: label, text, specialType: chosenType };
+    }
+
     const level = CardUtils.getRandomLevel();
-    const text = await CardUtils.fetchCardFromAPI(category, level);
-    return { category, level, text };
+    const text = await CardUtils.fetchCardFromAPI(category, level, this.roomCode);
+    return { category, level, text, specialType: null };
   },
 
   reset() {
@@ -91,6 +134,7 @@ const Game = {
     this.roomCode = null;
     this.myPlayerName = null;
     this.history = {};
+    this.immunity = {};
     CardUtils.resetUsedCards();
   }
 };
@@ -146,6 +190,7 @@ const UI = {
 
     this.els.turnName = document.getElementById('turn-player-name');
     this.els.turnAvatar = document.getElementById('turn-avatar');
+    this.els.turnImmunityBadge = document.getElementById('turn-immunity-badge');
     this.els.btnVerdad = document.getElementById('btn-verdad');
     this.els.btnReto = document.getElementById('btn-reto');
 
@@ -156,6 +201,7 @@ const UI = {
     this.els.spinnerContainer = document.getElementById('spinner-container');
     this.els.cardContent = document.getElementById('card-content');
     this.els.btnCompleted = document.getElementById('btn-completed');
+    this.els.btnUseImmunity = document.getElementById('btn-use-immunity');
     this.els.btnShot = document.getElementById('btn-shot');
 
     this.els.shotPlayerName = document.getElementById('shot-player-name');
@@ -168,6 +214,16 @@ const UI = {
   },
 
   _bindEvents() {
+    if (this.els.btnUseImmunity) {
+      this.els.btnUseImmunity.addEventListener('click', () => {
+        if (Game.isSocketMode && socket) {
+          socket.emit('use_immunity', { roomCode: Game.roomCode });
+        } else {
+          this._handleUseImmunity();
+        }
+      });
+    }
+
     this.els.btnModeHost.addEventListener('click', () => {
       Game.isSocketMode = true;
       Game.isHost = true;
@@ -367,23 +423,22 @@ const UI = {
       this._renderTurn();
     });
 
-    socket.on('spin_and_reveal', async ({ category, level, text, currentPlayer }) => {
+    socket.on('spin_and_reveal', async (cardData) => {
+      const { category, level, text, currentPlayer, specialType, immunityCount } = cardData;
       this.showScreen('card');
       this.els.spinnerContainer.classList.remove('hidden');
       this.els.cardContent.classList.add('hidden');
 
-      this.els.cardCategory.textContent = category === 'verdad' ? '🔮 VERDAD' : '🔥 RETO';
-      this.els.cardCategory.className = 'card-category ' + category;
+      this.els.cardCategory.textContent = category === 'especial' ? '🌟 CARTA ESPECIAL' : (category === 'verdad' ? '🔮 VERDAD' : '🔥 RETO');
+      this.els.cardCategory.className = 'card-category ' + (category === 'especial' ? 'especial' : category);
 
       await this._animateSpinner(level);
 
-      this.els.cardLevel.textContent = CardUtils.levelLabels[level];
-      this.els.cardLevel.style.color = CardUtils.levelColors[level];
-      this.els.cardText.textContent = text;
-      this.els.cardPlayerName.textContent = currentPlayer;
+      if (typeof immunityCount !== 'undefined') {
+        Game.immunity[currentPlayer] = immunityCount;
+      }
 
-      const cardBody = document.getElementById('card-body');
-      cardBody.className = 'card-body ' + (category === 'verdad' ? 'verdad-card' : 'reto-card');
+      this._displayCardContent({ category, level, text, specialType }, currentPlayer);
 
       this.els.spinnerContainer.classList.add('hidden');
       this.els.cardContent.classList.remove('hidden');
@@ -511,24 +566,93 @@ const UI = {
     this.els.spinnerContainer.classList.remove('hidden');
     this.els.cardContent.classList.add('hidden');
 
-    this.els.cardCategory.textContent = category === 'verdad' ? '🔮 VERDAD' : '🔥 RETO';
-    this.els.cardCategory.className = 'card-category ' + category;
+    this.els.cardCategory.textContent = card.category === 'especial' ? '🌟 CARTA ESPECIAL' : (category === 'verdad' ? '🔮 VERDAD' : '🔥 RETO');
+    this.els.cardCategory.className = 'card-category ' + (card.category === 'especial' ? 'especial' : category);
 
     await this._animateSpinner(card.level);
 
-    this.els.cardLevel.textContent = CardUtils.levelLabels[card.level];
-    this.els.cardLevel.style.color = CardUtils.levelColors[card.level];
-    this.els.cardText.textContent = card.text;
-    this.els.cardPlayerName.textContent = Game.getCurrentPlayer();
-
-    const cardBody = document.getElementById('card-body');
-    cardBody.className = 'card-body ' + (category === 'verdad' ? 'verdad-card' : 'reto-card');
+    this._displayCardContent(card, Game.getCurrentPlayer());
 
     this.els.spinnerContainer.classList.add('hidden');
     this.els.cardContent.classList.remove('hidden');
 
     void this.els.cardContent.offsetWidth;
     this.els.cardContent.classList.add('card-reveal');
+  },
+
+  _displayCardContent(card, currentPlayer) {
+    const isSpecial = card.category === 'especial';
+    const cardBody = document.getElementById('card-body');
+
+    if (isSpecial) {
+      this.els.cardCategory.textContent = '🌟 CARTA ESPECIAL';
+      this.els.cardCategory.className = 'card-category especial';
+
+      this.els.cardLevel.textContent = card.level;
+      this.els.cardLevel.style.color = 'var(--neon-gold)';
+      this.els.cardText.textContent = card.text;
+      this.els.cardPlayerName.textContent = currentPlayer;
+
+      cardBody.className = 'card-body especial-card';
+
+      if (card.specialType === 'inmunidad') {
+        if (!Game.isSocketMode) Game.addImmunity(currentPlayer);
+        this.els.btnCompleted.textContent = '¡Reclamar Inmunidad! 🛡️';
+        this.els.btnCompleted.classList.remove('hidden');
+        this.els.btnShot.classList.add('hidden');
+        if (this.els.btnUseImmunity) this.els.btnUseImmunity.classList.add('hidden');
+      } else if (card.specialType === 'trago_solidario') {
+        this.els.btnCompleted.classList.add('hidden');
+        this.els.btnShot.textContent = '¡Tomar Shots Juntos! 🍹';
+        this.els.btnShot.classList.remove('hidden');
+        if (this.els.btnUseImmunity) this.els.btnUseImmunity.classList.add('hidden');
+      } else if (card.specialType === 'el_juicio') {
+        this.els.btnCompleted.textContent = '¡Cumplido! ✅';
+        this.els.btnCompleted.classList.remove('hidden');
+        this.els.btnShot.textContent = 'Me Rindo (Shot) 🍹';
+        this.els.btnShot.classList.remove('hidden');
+        if (this.els.btnUseImmunity) this.els.btnUseImmunity.classList.add('hidden');
+      }
+    } else {
+      this.els.cardCategory.textContent = card.category === 'verdad' ? '🔮 VERDAD' : '🔥 RETO';
+      this.els.cardCategory.className = 'card-category ' + card.category;
+
+      this.els.cardLevel.textContent = CardUtils.levelLabels[card.level] || card.level;
+      this.els.cardLevel.style.color = CardUtils.levelColors[card.level] || '#ffffff';
+      this.els.cardText.textContent = card.text;
+      this.els.cardPlayerName.textContent = currentPlayer;
+
+      cardBody.className = 'card-body ' + (card.category === 'verdad' ? 'verdad-card' : 'reto-card');
+
+      this.els.btnCompleted.textContent = '¡Completado!✅';
+      this.els.btnCompleted.classList.remove('hidden');
+      this.els.btnShot.textContent = 'Me Rindo 🏳️';
+      this.els.btnShot.classList.remove('hidden');
+
+      const immunityCount = Game.getImmunity(currentPlayer);
+      if (this.els.btnUseImmunity) {
+        if (immunityCount > 0) {
+          this.els.btnUseImmunity.textContent = `🛡️ Usar Inmunidad (${immunityCount})`;
+          this.els.btnUseImmunity.classList.remove('hidden');
+        } else {
+          this.els.btnUseImmunity.classList.add('hidden');
+        }
+      }
+    }
+  },
+
+  _handleUseImmunity() {
+    const player = Game.getCurrentPlayer();
+    if (Game.useImmunity(player)) {
+      this._confettiBurst();
+      Game.nextTurn();
+      setTimeout(() => {
+        this.showScreen('game');
+        this._renderTurn();
+        this.els.btnVerdad.disabled = false;
+        this.els.btnReto.disabled = false;
+      }, 600);
+    }
   },
 
   _handleCompleted() {
@@ -595,6 +719,16 @@ const UI = {
     const name = Game.getCurrentPlayer();
     this.els.turnName.textContent = name;
     this.els.turnAvatar.textContent = name.charAt(0).toUpperCase();
+
+    const immunityCount = Game.getImmunity(name);
+    if (this.els.turnImmunityBadge) {
+      if (immunityCount > 0) {
+        this.els.turnImmunityBadge.textContent = `🛡️ ${immunityCount} Inmunidad(es) Divina(s) acumulada(s)`;
+        this.els.turnImmunityBadge.classList.remove('hidden');
+      } else {
+        this.els.turnImmunityBadge.classList.add('hidden');
+      }
+    }
 
     const forced = Game.getForcedChoice(name);
     const noticeEl = document.getElementById('turn-forced-notice');

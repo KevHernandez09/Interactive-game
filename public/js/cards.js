@@ -10,7 +10,22 @@ const CARDS = {
       "¿Cuál es la cosa más rara que has googleado a las 3 AM?",
       "¿Alguna vez te has comido algo del suelo cuando nadie te veía?",
       "¿Cuál es la excusa más patética que has usado para cancelar planes?",
-      "Confiesa: ¿alguna vez le diste stalk a tu ex en redes sociales? ¿Hasta dónde llegaste?"
+      "Confiesa: ¿alguna vez le diste stalk a tu ex en redes sociales? ¿Hasta dónde llegaste?",
+      "¿Cuál ha sido tu compra más absurda o inútil que has hecho en internet?",
+      "¿Alguna vez te gustó el/la novio/a de un amigo/a?",
+      "¿Cuál es la foto más ridícula que tienes en tu galería actualmente?",
+      "¿Qué es lo más vergonzoso que has hecho frente a un cliente o jefe?",
+      "¿Alguna vez fingiste que te gustaba un regalo que odiaste por completo?",
+      "¿Cuál es tu hábito más asqueroso cuando estás completamente solo/a en casa?",
+      "¿Alguna vez te quedaste dormido/a en un lugar totalmente inapropiado?",
+      "¿Qué es lo más ridículo que has hecho por llamar la atención de alguien?",
+      "¿Alguna vez has dicho 'te amo' sin sentirlo realmente?",
+      "¿Cuál es el apodo más ridículo que te han puesto en la vida?",
+      "¿Alguna vez lloraste viendo una película animada o un comercial?",
+      "¿Has fingido saber de un tema solo para no quedar mal en una plática?",
+      "¿Cuál es el secreto de alguien presente que sabes pero nunca has dicho?",
+      "¿Alguna vez se te salió un gas en una cita o reunión importante?",
+      "¿Qué canción secreta te sabes de memoria y cantas a todo pulmón a solas?"
     ],
     medio: [
       "¿Cuál ha sido tu peor experiencia en una cita? Da todos los detalles.",
@@ -22,7 +37,22 @@ const CARDS = {
       "¿Alguna vez te cacharon en una situación comprometedora? ¿Quién te vio?",
       "¿Cuál es el lugar más extraño donde has besado a alguien?",
       "Si tuvieras que elegir a alguien de este grupo para una cita, ¿a quién elegirías y por qué?",
-      "¿Alguna vez has mandado fotos subidas de tono? ¿A quién?"
+      "¿Alguna vez has mandado fotos subidas de tono? ¿A quién?",
+      "¿Quién de los presentes te parece la persona más atractiva físicamente?",
+      "¿Alguna vez tuviste un 'amigo con derechos' que terminó saliendo mal?",
+      "¿Cuál ha sido el beso más apasionado o memorable de tu vida?",
+      "¿Alguna vez besaste a más de una persona en la misma noche?",
+      "¿Alguna vez revisaste el celular de tu pareja o ex a sus espaldas?",
+      "¿Qué cualidad física es la primera que le miras a alguien cuando te atrae?",
+      "¿Alguna vez tuviste un sueño erótico con alguien de tu grupo de amigos?",
+      "¿Cuál ha sido la propuesta más candente que te han hecho por redes?",
+      "¿Alguna vez saliste con alguien solo porque pagaba todo?",
+      "¿Qué es lo más arriesgado que has hecho por amor o atracción?",
+      "¿Alguna vez fingiste satisfacción para terminar rápido un momento íntimo?",
+      "Si pudieras repetir una noche con un ex, ¿con cuál sería y por qué?",
+      "¿Cuál es la mentira piadosa que más usas al salir con alguien?",
+      "¿Alguna vez te han bateado de la manera más humillante posible?",
+      "¿Qué es lo primero que harías si te quedaras a solas con tu crush actual?"
     ],
     alto: [
       "Cuenta con detalle la experiencia más salvaje que has tenido en una fiesta.",
@@ -33,7 +63,23 @@ const CARDS = {
       "Si pudieras pasar una noche con alguien famoso sin consecuencias, ¿con quién sería?",
       "¿Cuál es la mentira más grande que has dicho a una pareja?",
       "Cuenta algo que hiciste y juraste que nunca iba a contar.",
-      "¿Alguna vez has tenido pensamientos prohibidos con alguien presente en esta fiesta?"
+      "¿Alguna vez has tenido pensamientos prohibidos con alguien presente en esta fiesta?",
+      "¿Cuál es el lugar más público o prohibido donde has tenido un encuentro íntimo?",
+      "Si tuvieras que hacer un intercambio de pareja con alguien de la fiesta, ¿quién sería?",
+      "¿Has tenido alguna experiencia con personas de tu mismo sexo o lo probarías?",
+      "¿Cuál es la lencería o prenda íntima más salvaje que tienes guardada?",
+      "¿Alguna vez grabaste o dejaste que te grabaran en un momento íntimo?",
+      "Confiesa qué persona de la sala te genera más tensión sexual ahora mismo.",
+      "¿Cuál ha sido tu experiencia íntima más vergonzosa o graciosa que falló?",
+      "¿Alguna vez fuiste el 'tercero en discordia' o destruiste una relación?",
+      "¿Alguna vez te han atrapado haciendo algo prohibido en un vehículo?",
+      "¿Cuál es tu fetiche o gusto secreto que casi nadie conoce?",
+      "¿Qué harías si la persona a tu derecha te diera luz verde ahora mismo?",
+      "¿Cuál ha sido tu maratón íntimo más largo en un solo día?",
+      "¿Alguna vez pagaste o te pagaron por una cita o algo más?",
+      "Cuenta la historia del peor error que cometiste por un arrebato de pasión.",
+      "Si tuvieras que besar pasionalmente a dos personas de este grupo, ¿a quiénes elegirías?",
+      "¿Qué es lo más extremo que has estado dispuesto/a a hacer en la cama?"
     ]
   },
   reto: {
@@ -47,7 +93,22 @@ const CARDS = {
       "Haz tu mejor cara de 'bedroom eyes' y mantenla 10 segundos sin reírte.",
       "Dedícale una canción de amor al jugador de tu izquierda, cantándola con sentimiento.",
       "Publica una historia de Instagram diciendo: 'Busco novio/a, apliquen en mis DMs'.",
-      "Haz 10 sentadillas mientras dices piropos al grupo."
+      "Haz 10 sentadillas mientras dices piropos al grupo.",
+      "Haz una pasarela de moda exagerada por toda la habitación como supermodelo.",
+      "Deja que la persona a tu izquierda te peine o despeine como quiera.",
+      "Manda un emoji de berenjena o durazno al quinto contacto de tu lista de chats.",
+      "Haz una imitación de un gato seductor durante 20 segundos.",
+      "Tómate una selfie fea y ponla de foto de perfil de WhatsApp por 10 minutos.",
+      "Pídele matrimonio con una rodilla en el piso al jugador frente a ti.",
+      "Haz 15 lagartijas o abdominales contando con voz sexy.",
+      "Habla susurrando al oído de todos tus respuestas durante los próximos 5 minutos.",
+      "Haz un dramático monólogo de telenovela reclamándole a un jugador por 'infiel'.",
+      "Deja que el grupo te ponga un apodo que tendrás que responder el resto del juego.",
+      "Intenta chupar tu propio codo durante 15 segundos mientras te toman foto.",
+      "Haz el sonido de un animal salvaje haciendo cortejo durante 15 segundos.",
+      "Recita un poema improvisado super cursi dedicado a la persona a tu derecha.",
+      "Mantén los ojos cerrados mientras alguien del grupo te da a probar algo de comer/tomar.",
+      "Imita a un famoso celebrando un gol o victoria de manera súper exagerada."
     ],
     medio: [
       "Dale un masaje de 30 segundos en los hombros a la persona que elija el grupo.",
@@ -59,7 +120,22 @@ const CARDS = {
       "Deja que el grupo elija a alguien y mándale un mensaje coqueto desde tu teléfono.",
       "Quítate una prenda de ropa (zapatos y calcetines no cuentan).",
       "Haz un striptease PG-13 de 15 segundos (solo baile sensual).",
-      "Susúrrale algo 'spicy' al oído al jugador frente a ti."
+      "Susúrrale algo 'spicy' al oído al jugador frente a ti.",
+      "Dale un beso en la mejilla muy cerca de los labios a la persona a tu izquierda.",
+      "Quítate los zapatos utilizando únicamente tus dientes o sin usar las manos.",
+      "Deja que alguien del grupo te dibuje algo atrevido en el brazo con plumón.",
+      "Baila lentamente abrazado/a con quien el grupo decida durante 30 segundos.",
+      "Manda una foto de tus labios lanzando un beso al chat grupal de tu familia o trabajo.",
+      "Deja que la persona a tu derecha te dé de comer o tomar en la boca.",
+      "Huele el cuello de 3 personas del grupo y di cuál huele más excitante.",
+      "Mantén contacto visual de 30 segundos sin pestañear con quien consideres más guapo/a.",
+      "Permite que la persona de tu izquierda te busque una foto comprometedora en el cel.",
+      "Haz un baile de twerk sensual durante 20 segundos frente al grupo.",
+      "Simula que le estás haciendo un masaje apasionado a un cojín por 20 segundos.",
+      "Manda un audio jadear o suspirar al primer chat que tengas fijado.",
+      "Deja que el grupo te cambie el estado de redes sociales por uno que ellos elijan.",
+      "Ponte de espaldas y deja que alguien del grupo te dé una nalgada ligera.",
+      "Pídele a alguien del grupo que te muerda suavemente el lóbulo de la oreja."
     ],
     alto: [
       "Besa en la boca a quien el grupo decida (si ambos aceptan).",
@@ -71,7 +147,22 @@ const CARDS = {
       "Deja que el grupo cree y publique una historia comprometedora en tu Instagram.",
       "Baila sensualmente con la persona que el grupo decida durante 1 minuto.",
       "Confiesa algo y después besa a alguien del grupo en la mejilla.",
-      "Haz un reto de 'verdad o beso': responde la pregunta que el grupo haga o besa a quien ellos decidan."
+      "Haz un reto de 'verdad o beso': responde la pregunta que el grupo haga o besa a quien ellos decidan.",
+      "Intercambia una prenda de ropa con la persona que el grupo elija durante 3 rondas.",
+      "Dale un beso francés de 5 segundos a la persona que acepte del grupo.",
+      "Tómate un shot directamente del ombligo de la persona que el grupo elija.",
+      "Susúrrale al oído a la persona de tu izquierda tu fantasía secreta más salvaje.",
+      "Pásale un hielo de boca a boca a la persona que el grupo elija sin tirarlo.",
+      "Quítate dos prendas de ropa que el grupo elija y quédate así 2 rondas.",
+      "Siéntate frente a alguien del grupo y déjate vendar los ojos mientras te acarician el rostro 30 seg.",
+      "Manda una nota de voz a tu crush diciendo: 'Oye, soñé contigo anoche y estuvo muy picante...'.",
+      "Dale un beso en la espalda o abdomen a la persona que esté a tu derecha.",
+      "Haz un sensual baile en pareja con la persona más tímida del grupo.",
+      "Deja que alguien del grupo use tu teléfono para mandar un sticker erótico a su elección.",
+      "Hazte un masaje mutuo en la espalda con la persona frente a ti con luz tenue por 1 min.",
+      "Demuestra en vivo tu mejor movimiento o técnica de seducción con una silla o cojín.",
+      "Quítate la camisa/playera (o prenda equivalente si todos están de acuerdo) por 1 ronda.",
+      "Realiza el reto del beso de 3 segundos con 2 personas diferentes del grupo."
     ]
   }
 };
@@ -83,9 +174,10 @@ const CardUtils = {
 
   _usedCards: { verdad: { bajo: [], medio: [], alto: [] }, reto: { bajo: [], medio: [], alto: [] } },
 
-  async fetchCardFromAPI(category, level) {
+  async fetchCardFromAPI(category, level, roomCode) {
     try {
-      const res = await fetch(`/api/cards/random?category=${category}&level=${level}`);
+      const url = `/api/cards/random?category=${category}&level=${level}${roomCode ? `&roomCode=${roomCode}` : ''}`;
+      const res = await fetch(url);
       if (res.ok) {
         const data = await res.json();
         return data.text;

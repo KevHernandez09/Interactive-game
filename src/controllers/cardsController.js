@@ -25,8 +25,10 @@ const getAllCards = (req, res) => {
   res.json(cardsData);
 };
 
+const roomUsedCards = new Map();
+
 const getRandomCard = (req, res) => {
-  const { category, level } = req.query;
+  const { category, level, roomCode } = req.query;
 
   if (!category || !cardsData[category]) {
     return res.status(400).json({ error: 'Categoría requerida o inválida (verdad/reto)' });
@@ -40,7 +42,25 @@ const getRandomCard = (req, res) => {
     return res.status(404).json({ error: 'No existen cartas para ese nivel' });
   }
 
-  const randomCard = pool[Math.floor(Math.random() * pool.length)];
+  const roomKey = roomCode || 'global';
+  if (!roomUsedCards.has(roomKey)) {
+    roomUsedCards.set(roomKey, {
+      verdad: { bajo: [], medio: [], alto: [] },
+      reto: { bajo: [], medio: [], alto: [] }
+    });
+  }
+
+  const roomTracker = roomUsedCards.get(roomKey);
+  const used = roomTracker[category][selectedLevel];
+
+  if (used.length >= pool.length) {
+    used.length = 0; // Reset pool when all cards have been used
+  }
+
+  const available = pool.filter((_, i) => !used.includes(i));
+  const randomCard = available[Math.floor(Math.random() * available.length)];
+  const originalIdx = pool.indexOf(randomCard);
+  used.push(originalIdx);
 
   res.json({
     category,
