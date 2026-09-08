@@ -15,6 +15,7 @@ const Game = {
   isHost: false,
   roomCode: null,
   myPlayerName: null,
+  history: {},
 
   addPlayer(name) {
     const trimmed = name.trim();
@@ -39,8 +40,32 @@ const Game = {
     if (!this.canStart()) return false;
     this.currentPlayerIndex = 0;
     this.isRunning = true;
+    this.history = {};
     CardUtils.resetUsedCards();
     return true;
+  },
+
+  recordChoice(playerName, category) {
+    if (!playerName) return;
+    if (!this.history[playerName]) {
+      this.history[playerName] = [];
+    }
+    this.history[playerName].push(category);
+  },
+
+  getForcedChoice(playerName) {
+    if (!playerName) return null;
+    const list = this.history[playerName] || [];
+    if (list.length >= 2) {
+      const lastTwo = list.slice(-2);
+      if (lastTwo[0] === 'verdad' && lastTwo[1] === 'verdad') {
+        return 'reto';
+      }
+      if (lastTwo[0] === 'reto' && lastTwo[1] === 'reto') {
+        return 'verdad';
+      }
+    }
+    return null;
   },
 
   getCurrentPlayer() {
@@ -65,6 +90,7 @@ const Game = {
     this.isHost = false;
     this.roomCode = null;
     this.myPlayerName = null;
+    this.history = {};
     CardUtils.resetUsedCards();
   }
 };
@@ -428,12 +454,18 @@ const UI = {
   },
 
   _onChoiceSelected(category) {
+    const name = Game.getCurrentPlayer();
+    const forced = Game.getForcedChoice(name);
+    const finalCategory = forced || category;
+
+    Game.recordChoice(name, finalCategory);
+
     if (Game.isSocketMode && socket) {
       this.els.btnVerdad.disabled = true;
       this.els.btnReto.disabled = true;
-      socket.emit('select_category', { roomCode: Game.roomCode, category });
+      socket.emit('select_category', { roomCode: Game.roomCode, category: finalCategory });
     } else {
-      this._handleChoice(category);
+      this._handleChoice(finalCategory);
     }
   },
 
@@ -563,6 +595,41 @@ const UI = {
     const name = Game.getCurrentPlayer();
     this.els.turnName.textContent = name;
     this.els.turnAvatar.textContent = name.charAt(0).toUpperCase();
+
+    const forced = Game.getForcedChoice(name);
+    const noticeEl = document.getElementById('turn-forced-notice');
+
+    this.els.btnVerdad.classList.remove('disabled-forced', 'pulse-forced');
+    this.els.btnReto.classList.remove('disabled-forced', 'pulse-forced');
+
+    if (forced === 'reto') {
+      this.els.btnVerdad.disabled = true;
+      this.els.btnVerdad.classList.add('disabled-forced');
+      this.els.btnReto.disabled = false;
+      this.els.btnReto.classList.add('pulse-forced');
+
+      if (noticeEl) {
+        noticeEl.textContent = `⚡ ¡OBLIGATORIO PARA ${name.toUpperCase()}: RETO! (Eligió Verdad 2 veces seguidas)`;
+        noticeEl.classList.remove('hidden');
+      }
+    } else if (forced === 'verdad') {
+      this.els.btnReto.disabled = true;
+      this.els.btnReto.classList.add('disabled-forced');
+      this.els.btnVerdad.disabled = false;
+      this.els.btnVerdad.classList.add('pulse-forced');
+
+      if (noticeEl) {
+        noticeEl.textContent = `🔮 ¡OBLIGATORIO PARA ${name.toUpperCase()}: VERDAD! (Eligió Reto 2 veces seguidas)`;
+        noticeEl.classList.remove('hidden');
+      }
+    } else {
+      this.els.btnVerdad.disabled = false;
+      this.els.btnReto.disabled = false;
+
+      if (noticeEl) {
+        noticeEl.classList.add('hidden');
+      }
+    }
 
     const turnCard = document.querySelector('.turn-card');
     if (turnCard) {

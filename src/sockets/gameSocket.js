@@ -142,6 +142,7 @@ function initSockets(io, baseFrontendUrl) {
 
       room.status = 'playing';
       room.currentTurnIndex = 0;
+      room.history = {};
 
       io.to(roomCode).emit('game_started', {
         currentPlayer: room.players[room.currentTurnIndex].name,
@@ -154,10 +155,29 @@ function initSockets(io, baseFrontendUrl) {
       const room = rooms.get(roomCode);
       if (!room || room.status !== 'playing') return;
 
+      const currentPlayerName = room.players[room.currentTurnIndex]?.name;
+      if (!currentPlayerName) return;
+
+      if (!room.history) room.history = {};
+      const playerHistory = room.history[currentPlayerName] || [];
+
+      let finalCategory = category;
+      if (playerHistory.length >= 2) {
+        const lastTwo = playerHistory.slice(-2);
+        if (lastTwo[0] === 'verdad' && lastTwo[1] === 'verdad') {
+          finalCategory = 'reto';
+        } else if (lastTwo[0] === 'reto' && lastTwo[1] === 'reto') {
+          finalCategory = 'verdad';
+        }
+      }
+
+      playerHistory.push(finalCategory);
+      room.history[currentPlayerName] = playerHistory;
+
       const levels = ['bajo', 'medio', 'alto'];
       const randomLevel = levels[Math.floor(Math.random() * levels.length)];
 
-      const fakeReq = { query: { category, level: randomLevel } };
+      const fakeReq = { query: { category: finalCategory, level: randomLevel } };
       let cardText = '¿Cuál es tu mayor secreto?';
 
       const fakeRes = {
@@ -169,13 +189,13 @@ function initSockets(io, baseFrontendUrl) {
 
       cardsController.getRandomCard(fakeReq, fakeRes);
 
-      room.currentCard = { category, level: randomLevel, text: cardText };
+      room.currentCard = { category: finalCategory, level: randomLevel, text: cardText };
 
       io.to(roomCode).emit('spin_and_reveal', {
-        category,
+        category: finalCategory,
         level: randomLevel,
         text: cardText,
-        currentPlayer: room.players[room.currentTurnIndex].name
+        currentPlayer: currentPlayerName
       });
     });
 
