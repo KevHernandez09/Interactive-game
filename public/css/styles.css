@@ -121,6 +121,13 @@ body::before {
   transform: scale(1);
 }
 
+#screen-mode,
+#screen-game,
+#screen-card,
+#screen-shot {
+  justify-content: center;
+}
+
 .logo {
   font-family: var(--font-display);
   font-weight: 900;
