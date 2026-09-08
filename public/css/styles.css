@@ -624,18 +624,41 @@ body::before {
   100% { transform: scale(1); }
 }
 
-.spinner-dice {
-  font-size: 3rem;
-  margin-top: 16px;
-  animation: diceRoll 0.15s linear infinite;
+.dice-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  margin-top: 20px;
+  perspective: 400px;
 }
 
-@keyframes diceRoll {
-  0% { transform: rotate(0deg); }
-  25% { transform: rotate(10deg); }
-  50% { transform: rotate(0deg); }
-  75% { transform: rotate(-10deg); }
-  100% { transform: rotate(0deg); }
+.spinner-die {
+  display: inline-block;
+  font-size: 3.4rem;
+  line-height: 1;
+  filter: drop-shadow(0 0 15px rgba(168, 85, 247, 0.6));
+  user-select: none;
+}
+
+.die-left {
+  animation: dieTumbleLeft 0.3s cubic-bezier(0.4, 0, 0.2, 1) infinite alternate;
+}
+
+.die-right {
+  animation: dieTumbleRight 0.35s cubic-bezier(0.4, 0, 0.2, 1) infinite alternate;
+}
+
+@keyframes dieTumbleLeft {
+  0% { transform: translateY(0) rotate(-15deg) scale(0.9); }
+  50% { transform: translateY(-14px) rotate(25deg) scale(1.15); }
+  100% { transform: translateY(0) rotate(-25deg) scale(1); }
+}
+
+@keyframes dieTumbleRight {
+  0% { transform: translateY(-12px) rotate(20deg) scale(1.15); }
+  50% { transform: translateY(0) rotate(-15deg) scale(0.9); }
+  100% { transform: translateY(-10px) rotate(30deg) scale(1.05); }
 }
 
 .card-content {

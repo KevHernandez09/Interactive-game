@@ -655,6 +655,10 @@ const UI = {
 
   async _animateSpinner(finalLevel) {
     const levelDisplay = document.getElementById('spinner-level');
+    const die1 = document.getElementById('die-1');
+    const die2 = document.getElementById('die-2');
+    const dieFaces = ['⚀', '⚁', '⚂', '⚃', '⚄', '⚅'];
+
     const levels = CardUtils.levels;
     const labels = CardUtils.levelLabels;
     const colors = CardUtils.levelColors;
@@ -670,6 +674,9 @@ const UI = {
           levelDisplay.style.color = colors[levels[idx]];
           levelDisplay.style.textShadow = `0 0 20px ${colors[levels[idx]]}, 0 0 40px ${colors[levels[idx]]}`;
 
+          if (die1) die1.textContent = dieFaces[Math.floor(Math.random() * dieFaces.length)];
+          if (die2) die2.textContent = dieFaces[Math.floor(Math.random() * dieFaces.length)];
+
           step++;
           const delay = 70 + (step * 18);
           setTimeout(decelerate, delay);
@@ -678,6 +685,10 @@ const UI = {
           levelDisplay.style.color = colors[finalLevel];
           levelDisplay.style.textShadow = `0 0 30px ${colors[finalLevel]}, 0 0 60px ${colors[finalLevel]}`;
           levelDisplay.classList.add('spinner-final');
+
+          if (die1) die1.textContent = dieFaces[Math.floor(Math.random() * dieFaces.length)];
+          if (die2) die2.textContent = dieFaces[Math.floor(Math.random() * dieFaces.length)];
+
           setTimeout(() => {
             levelDisplay.classList.remove('spinner-final');
             resolve();
