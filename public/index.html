@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Puro Vicio — El juego de fiesta definitivo para adultos sobre Node.js." />
+  <title>Puro Vicio</title>
+  <link rel="stylesheet" href="css/styles.css" />
+  <link rel="icon"
+    href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🍸</text></svg>" />
+</head>
+
+<body>
+
+  <canvas id="particles-canvas"></canvas>
+
+  <div id="confetti-container"></div>
+
+  <section id="screen-mode" class="screen active">
+    <h1 class="logo">Puro Vicio</h1>
+    <p class="logo-subtitle">Un jueguito para amiguitos 🔥</p>
+
+    <div class="glass-card text-center">
+      <h2 style="font-size: 1.2rem; margin-bottom: 20px; color: var(--text-secondary);">¿Cómo quieren jugar hoy?</h2>
+
+      <button id="btn-mode-host" class="btn-start ready"
+        style="margin-bottom: 12px; background: var(--gradient-purple);">
+        CREAR SALA 👑
+      </button>
+
+      <button id="btn-mode-join" class="btn-start ready" style="margin-bottom: 12px; background: var(--gradient-pink);">
+        UNIRSE CON CÓDIGO 📱
+      </button>
+
+      <button id="btn-mode-local" class="btn-start"
+        style="background: rgba(255,255,255,0.08); color: var(--text-secondary);">
+        MODO UN SOLO DISPOSITIVO 🎮
+      </button>
+    </div>
+  </section>
+
+  <section id="screen-host-lobby" class="screen">
+    <h1 class="logo">Puro Vicio</h1>
+    <p class="logo-subtitle">Sala de la Fiesta 🍸</p>
+
+    <div class="glass-card text-center">
+      <p
+        style="font-size: 0.8rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 2px; margin-bottom: 2px;">
+        CÓDIGO DE SALA</p>
+      <h2 id="host-room-code"
+        style="font-family: var(--font-display); font-size: 2.2rem; font-weight: 900; color: var(--neon-yellow); margin-bottom: 6px; letter-spacing: 3px;">
+        VIC-XXXX</h2>
+
+      <div id="host-qr-container"
+        style="margin: 4px auto 8px; background: white; padding: 6px; border-radius: 10px; display: inline-block;">
+        <img id="host-qr-img" src="" alt="QR de Sala" style="width: 100px; height: 100px; display: block;" />
+      </div>
+
+      <p id="host-ip-url"
+        style="font-size: 0.8rem; color: var(--neon-cyan); margin-bottom: 10px; word-break: break-all;"></p>
+
+      <h3 style="font-size: 0.9rem; color: var(--text-primary); margin-bottom: 6px;">Jugadores Conectados:</h3>
+      <div class="player-list-container" style="max-height: 110px; margin-bottom: 8px;">
+        <ul id="host-player-list" class="player-list"></ul>
+      </div>
+
+      <p id="host-player-count" class="player-count" style="margin-bottom: 10px;">0/10 jugadores</p>
+
+      <button id="btn-host-start" class="btn-start" disabled style="margin-bottom: 8px; padding: 12px;">
+        INICIAR FIESTA 🔥
+      </button>
+
+      <button id="btn-back-host" class="btn-start"
+        style="background: rgba(255,255,255,0.08); color: var(--text-muted); padding: 8px; font-size: 0.9rem;">
+        ← Regresar al menú
+      </button>
+    </div>
+  </section>
+
+  <section id="screen-join" class="screen">
+    <h1 class="logo">Puro Vicio</h1>
+    <p class="logo-subtitle"> Entra a la Sala 👥</p>
+
+    <div class="glass-card text-center">
+      <div class="input-group" style="margin-bottom: 12px;">
+        <input type="text" id="join-code-input" class="input-text" placeholder="Código (ej. VIC-A1B2)" maxlength="10"
+          style="text-transform: uppercase;" autocomplete="off" />
+      </div>
+
+      <div class="input-group" style="margin-bottom: 16px;">
+        <input type="text" id="join-name-input" class="input-text" placeholder="Tu Nombre..." maxlength="20"
+          autocomplete="off" />
+      </div>
+
+      <div id="join-error" class="setup-error" role="alert"></div>
+
+      <button id="btn-submit-join" class="btn-start ready" style="margin-bottom: 10px;">
+        UNIRME A LA FIESTA 🎉
+      </button>
+
+      <button id="btn-leave-room" class="btn-start hidden" style="background: rgba(239, 68, 68, 0.2); color: #ef4444; border: 1px solid rgba(239,68,68,0.4); margin-bottom: 10px; padding: 10px;">
+        🚪 Salir de la Sala
+      </button>
+
+      <button id="btn-back-join" class="btn-start"
+        style="background: rgba(255,255,255,0.08); color: var(--text-muted); padding: 10px;">
+        ← Regresar al menú
+      </button>
+    </div>
+  </section>
+
+  <section id="screen-setup" class="screen">
+    <h1 class="logo">Puro Vicio</h1>
+    <p class="logo-subtitle"> Un jueguito para amiguitos 🔥</p>
+
+    <div class="glass-card text-center">
+      <div class="input-group">
+        <input type="text" id="player-name-input" class="input-text" placeholder="Nombre del jugador..." maxlength="20"
+          autocomplete="off" />
+        <button id="btn-add-player" class="btn-add" aria-label="Agregar jugador">+</button>
+      </div>
+
+      <div id="setup-error" class="setup-error" role="alert"></div>
+
+      <div class="player-list-container">
+        <ul id="player-list" class="player-list"></ul>
+      </div>
+
+      <p id="player-count" class="player-count">0/10 jugadores</p>
+
+      <button id="btn-start" class="btn-start" disabled style="margin-bottom: 10px;">
+        INICIAR VICIO🔥
+      </button>
+
+      <button id="btn-back-setup" class="btn-start"
+        style="background: rgba(255,255,255,0.08); color: var(--text-muted); padding: 10px;">
+        ← Regresar al menú
+      </button>
+    </div>
+  </section>
+
+  <section id="screen-game" class="screen">
+    <div class="turn-card">
+      <p class="turn-label">Es el turno de</p>
+      <div id="turn-avatar" class="turn-avatar-large"></div>
+      <h2 id="turn-player-name" class="turn-player-name"></h2>
+      <p class="turn-question">¿Qué prefieres?</p>
+
+      <div class="choice-buttons" style="margin-bottom: 20px;">
+        <button id="btn-verdad" class="btn-choice btn-verdad">
+          <span class="btn-choice-icon">🔮</span>
+          VERDAD
+        </button>
+        <button id="btn-reto" class="btn-choice btn-reto">
+          <span class="btn-choice-icon">🔥</span>
+          RETO
+        </button>
+      </div>
+
+      <button id="btn-leave-game" class="btn-start" style="background: rgba(255,255,255,0.06); color: var(--text-muted); padding: 8px; font-size: 0.85rem; max-width: 200px; margin: 0 auto;">
+        🚪 Salir de la sala
+      </button>
+    </div>
+  </section>
+
+  <section id="screen-card" class="screen">
+    <div class="card-display">
+
+      <div id="spinner-container" class="spinner-container">
+        <p class="spinner-label">Determinando nivel...</p>
+        <p id="spinner-level" class="spinner-level"></p>
+        <div class="spinner-dice">🎲</div>
+      </div>
+
+      <div id="card-content" class="card-content hidden">
+        <p id="card-category" class="card-category"></p>
+        <p id="card-level" class="card-level"></p>
+
+        <div id="card-body" class="card-body">
+          <p id="card-text" class="card-text"></p>
+        </div>
+
+        <p class="card-for">Para: <strong id="card-player-name"></strong></p>
+
+        <div class="action-buttons">
+          <button id="btn-completed" class="btn-action btn-completed">
+            ¡Completado!✅
+          </button>
+          <button id="btn-shot" class="btn-action btn-surrender">
+            Me Rindo 🏳️
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="screen-shot" class="screen shot-screen">
+    <div class="shot-emoji">🥃</div>
+    <h2 class="shot-title">¡NO PUDO CON EL VICIO!</h2>
+    <p id="shot-player-name" class="shot-name"></p>
+    <p class="shot-message">Debe tomarse un <strong>SHOT</strong> como castigo. 🍹<br />Sin excusas, sin piedad.</p>
+    <button id="btn-next-after-shot" class="btn-next-shot">
+      Siguiente turno →
+    </button>
+  </section>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="js/cards.js"></script>
+  <script src="js/game.js"></script>
+</body>
+
+</html>
