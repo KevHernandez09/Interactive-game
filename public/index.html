@@ -41,38 +41,31 @@
   </section>
 
   <section id="screen-host-lobby" class="screen">
-    <h1 class="logo">Puro Vicio</h1>
+    <h1 class="logo logo-sm">Puro Vicio</h1>
     <p class="logo-subtitle">Sala de la Fiesta 🍸</p>
 
-    <div class="glass-card text-center">
-      <p
-        style="font-size: 0.8rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 2px; margin-bottom: 2px;">
-        CÓDIGO DE SALA</p>
-      <h2 id="host-room-code"
-        style="font-family: var(--font-display); font-size: 2.2rem; font-weight: 900; color: var(--neon-yellow); margin-bottom: 6px; letter-spacing: 3px;">
-        VIC-XXXX</h2>
+    <div class="glass-card glass-card-scroll text-center">
+      <p class="label-upper">CÓDIGO DE SALA</p>
+      <h2 id="host-room-code" class="room-code-display">VIC-XXXX</h2>
 
-      <div id="host-qr-container"
-        style="margin: 8px auto 12px; background: white; padding: 10px; border-radius: 12px; display: inline-block;">
-        <img id="host-qr-img" src="" alt="QR de Sala" style="width: 200px; height: 200px; display: block;" />
+      <div id="host-qr-container" class="qr-container">
+        <img id="host-qr-img" src="" alt="QR de Sala" class="qr-img" />
       </div>
 
-      <p id="host-ip-url"
-        style="font-size: 0.8rem; color: var(--neon-cyan); margin-bottom: 10px; word-break: break-all;"></p>
+      <p id="host-ip-url" class="url-display"></p>
 
-      <h3 style="font-size: 0.9rem; color: var(--text-primary); margin-bottom: 6px;">Jugadores Conectados:</h3>
-      <div class="player-list-container" style="max-height: 180px; margin-bottom: 16px;">
+      <h3 class="section-label">Jugadores Conectados:</h3>
+      <div class="player-list-container player-list-lobby">
         <ul id="host-player-list" class="player-list"></ul>
       </div>
 
-      <p id="host-player-count" class="player-count" style="margin-bottom: 10px;">0/10 jugadores</p>
+      <p id="host-player-count" class="player-count">0/10 jugadores</p>
 
-      <button id="btn-host-start" class="btn-start" disabled style="margin-bottom: 8px; padding: 12px;">
+      <button id="btn-host-start" class="btn-start" disabled style="margin-bottom: 8px;">
         INICIAR FIESTA 🔥
       </button>
 
-      <button id="btn-back-host" class="btn-start"
-        style="background: rgba(255,255,255,0.08); color: var(--text-muted); padding: 8px; font-size: 0.9rem;">
+      <button id="btn-back-host" class="btn-back">
         ← Regresar al menú
       </button>
     </div>
@@ -103,8 +96,7 @@
         🚪 Salir de la Sala
       </button>
 
-      <button id="btn-back-join" class="btn-start"
-        style="background: rgba(255,255,255,0.08); color: var(--text-muted); padding: 10px;">
+      <button id="btn-back-join" class="btn-back">
         ← Regresar al menú
       </button>
     </div>
@@ -133,8 +125,7 @@
         INICIAR VICIO🔥
       </button>
 
-      <button id="btn-back-setup" class="btn-start"
-        style="background: rgba(255,255,255,0.08); color: var(--text-muted); padding: 10px;">
+      <button id="btn-back-setup" class="btn-back">
         ← Regresar al menú
       </button>
     </div>
