@@ -1,4 +1,11 @@
-const socket = typeof io !== 'undefined' ? io() : null;
+// ==========================================
+// CONFIGURACIÓN DE BACKEND
+// Si usas Vercel + Render, pon aquí la URL de tu backend en Render
+// Ejemplo: const BACKEND_URL = 'https://puro-vicio-backend.onrender.com';
+const BACKEND_URL = ''; // Dejar vacío para uso local
+// ==========================================
+
+const socket = typeof io !== 'undefined' ? io(BACKEND_URL || undefined) : null;
 
 const Game = {
   players: [],
@@ -231,11 +238,11 @@ const UI = {
   _bindSocketEvents() {
     if (!socket) return;
 
-    socket.on('room_created', ({ roomCode, joinUrl, qrCodeUrl, localIp, port }) => {
+    socket.on('room_created', ({ roomCode, joinUrl, qrCodeUrl, baseFrontendUrl }) => {
       Game.roomCode = roomCode;
       this.els.hostRoomCode.textContent = roomCode;
       this.els.hostQrImg.src = qrCodeUrl;
-      this.els.hostIpUrl.textContent = `O entra a: http://${localIp}:${port}`;
+      this.els.hostIpUrl.textContent = `O entra a: ${joinUrl}`;
     });
 
     socket.on('joined_successfully', ({ roomCode, playerName }) => {

@@ -12,16 +12,16 @@ function generateRoomCode() {
   return 'VIC-' + code;
 }
 
-function initSockets(io, localIp, port) {
+function initSockets(io, baseFrontendUrl) {
   io.on('connection', (socket) => {
 
     socket.on('create_room', async () => {
       const roomCode = generateRoomCode();
-      const joinUrl = `http://${localIp}:${port}/?room=${roomCode}`;
+      const joinUrl = `${baseFrontendUrl}/?room=${roomCode}`;
       
       let qrCodeUrl = '';
       try {
-        qrCodeUrl = await QRCode.toDataURL(joinUrl);
+        qrCodeUrl = await QRCode.toDataURL(joinUrl, { width: 300, margin: 2, color: { dark: '#0a0a12', light: '#ffffff' } });
       } catch (err) {
         console.error('Error QR:', err);
       }
@@ -44,8 +44,7 @@ function initSockets(io, localIp, port) {
         roomCode,
         joinUrl,
         qrCodeUrl,
-        localIp,
-        port
+        baseFrontendUrl
       });
     });
 

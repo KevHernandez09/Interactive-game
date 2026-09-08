@@ -10,11 +10,16 @@ const { initSockets } = require('./src/sockets/gameSocket');
 
 const app = express();
 const server = http.createServer(app);
+
+// Enable CORS allowing FRONTEND_URL or everything
+const allowedOrigins = process.env.FRONTEND_URL ? [process.env.FRONTEND_URL, 'http://localhost:8080', 'http://127.0.0.1:8080', 'http://localhost:3000'] : '*';
+
 const io = new Server(server, {
-  cors: { origin: '*' }
+  cors: { origin: allowedOrigins }
 });
 
 const PORT = process.env.PORT || 3000;
+const FRONTEND_URL = process.env.FRONTEND_URL;
 
 function getLocalIp() {
   const interfaces = os.networkInterfaces();
@@ -41,17 +46,20 @@ app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
-initSockets(io, localIp, PORT);
+// If FRONTEND_URL is set (Render), use it. Otherwise, use local IP (local dev).
+const baseFrontendUrl = FRONTEND_URL || `http://${localIp}:${PORT}`;
+
+initSockets(io, baseFrontendUrl);
 
 server.listen(PORT, () => {
   console.log(`
   ═══════════════════════════════════════════════════════════
-   🔥 PURO VICIO — Servidor Node.js + Sockets Activo 🔥
+   🔥 PURO VICIO — Servidor Backend Socket.io Activo 🔥
    
-   📍 Local:   http://localhost:${PORT}
-   📍 Red Wi-Fi: http://${localIp}:${PORT}
+   📍 Puerto local: ${PORT}
+   📍 Frontend URL base para QR: ${baseFrontendUrl}
    
-   ¡Invita a tus amigos conectándote a la misma red Wi-Fi!
+   ¡Listo para recibir conexiones en tiempo real!
   ═══════════════════════════════════════════════════════════
   `);
 });

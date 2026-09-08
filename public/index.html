@@ -53,15 +53,15 @@
         VIC-XXXX</h2>
 
       <div id="host-qr-container"
-        style="margin: 4px auto 8px; background: white; padding: 6px; border-radius: 10px; display: inline-block;">
-        <img id="host-qr-img" src="" alt="QR de Sala" style="width: 100px; height: 100px; display: block;" />
+        style="margin: 8px auto 12px; background: white; padding: 10px; border-radius: 12px; display: inline-block;">
+        <img id="host-qr-img" src="" alt="QR de Sala" style="width: 200px; height: 200px; display: block;" />
       </div>
 
       <p id="host-ip-url"
         style="font-size: 0.8rem; color: var(--neon-cyan); margin-bottom: 10px; word-break: break-all;"></p>
 
       <h3 style="font-size: 0.9rem; color: var(--text-primary); margin-bottom: 6px;">Jugadores Conectados:</h3>
-      <div class="player-list-container" style="max-height: 110px; margin-bottom: 8px;">
+      <div class="player-list-container" style="max-height: 180px; margin-bottom: 16px;">
         <ul id="host-player-list" class="player-list"></ul>
       </div>
 
@@ -205,7 +205,7 @@
     </button>
   </section>
 
-  <script src="/socket.io/socket.io.js"></script>
+  <script src="https://cdn.socket.io/4.8.1/socket.io.min.js"></script>
   <script src="js/cards.js"></script>
   <script src="js/game.js"></script>
 </body>
