@@ -183,16 +183,27 @@
       </div>
 
       <div id="card-content" class="card-content hidden">
-        <p id="card-category" class="card-category"></p>
-        <p id="card-level" class="card-level"></p>
+        <div id="card-box" class="card-box">
+          <!-- Tapa de la carta que se abre lateralmente -->
+          <div id="card-cover" class="card-cover">
+            <div class="cover-pattern"></div>
+            <h2 class="cover-logo">PURO VICIO</h2>
+            <div class="cover-icon">🍸</div>
+            <p class="cover-tap">TOCA PARA DESTAPAR 🃏</p>
+          </div>
 
-        <div id="card-body" class="card-body">
-          <p id="card-text" class="card-text"></p>
+          <!-- Contenido Estático y Legible de la Carta -->
+          <div id="card-body" class="card-body">
+            <p id="card-category" class="card-category"></p>
+            <p id="card-level" class="card-level"></p>
+            <div class="card-text-wrapper">
+              <p id="card-text" class="card-text"></p>
+            </div>
+            <p class="card-for">Para: <strong id="card-player-name"></strong></p>
+          </div>
         </div>
 
-        <p class="card-for">Para: <strong id="card-player-name"></strong></p>
-
-        <div class="action-buttons">
+        <div class="action-buttons" style="margin-top: 20px;">
           <button id="btn-completed" class="btn-action btn-completed">
             ¡Completado!✅
           </button>

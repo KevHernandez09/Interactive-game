@@ -200,6 +200,8 @@ const UI = {
     this.els.cardPlayerName = document.getElementById('card-player-name');
     this.els.spinnerContainer = document.getElementById('spinner-container');
     this.els.cardContent = document.getElementById('card-content');
+    this.els.cardBox = document.getElementById('card-box');
+    this.els.cardCover = document.getElementById('card-cover');
     this.els.btnCompleted = document.getElementById('btn-completed');
     this.els.btnUseImmunity = document.getElementById('btn-use-immunity');
     this.els.btnShot = document.getElementById('btn-shot');
@@ -214,6 +216,12 @@ const UI = {
   },
 
   _bindEvents() {
+    if (this.els.cardBox) {
+      this.els.cardBox.addEventListener('click', () => {
+        this.els.cardBox.classList.toggle('opened');
+      });
+    }
+
     if (this.els.btnUseImmunity) {
       this.els.btnUseImmunity.addEventListener('click', () => {
         if (Game.isSocketMode && socket) {
@@ -581,6 +589,10 @@ const UI = {
   },
 
   _displayCardContent(card, currentPlayer) {
+    if (this.els.cardBox) {
+      this.els.cardBox.classList.remove('opened');
+    }
+
     const isSpecial = card.category === 'especial';
     const cardBody = document.getElementById('card-body');
 
