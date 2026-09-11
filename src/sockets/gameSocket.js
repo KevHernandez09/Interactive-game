@@ -155,8 +155,15 @@ function initSockets(io, baseFrontendUrl) {
       const room = rooms.get(roomCode);
       if (!room || room.status !== 'playing') return;
 
-      const currentPlayerName = room.players[room.currentTurnIndex]?.name;
-      if (!currentPlayerName) return;
+      const currentTurnPlayer = room.players[room.currentTurnIndex];
+      if (!currentTurnPlayer) return;
+
+      // Only allow choice if socket matches the player whose turn it is (or host if acting)
+      if (currentTurnPlayer.socketId !== socket.id && room.hostSocketId !== socket.id) {
+        return socket.emit('error_message', 'No es tu turno.');
+      }
+
+      const currentPlayerName = currentTurnPlayer.name;
 
       if (!room.history) room.history = {};
       const playerHistory = room.history[currentPlayerName] || [];

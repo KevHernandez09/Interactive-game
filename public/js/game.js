@@ -614,12 +614,12 @@ const UI = {
         this.els.btnShot.classList.add('hidden');
         if (this.els.btnUseImmunity) this.els.btnUseImmunity.classList.add('hidden');
       } else if (card.specialType === 'trago_solidario') {
-        this.els.btnCompleted.classList.add('hidden');
-        this.els.btnShot.textContent = '¡Tomar Shots Juntos! 🍹';
-        this.els.btnShot.classList.remove('hidden');
+        this.els.btnCompleted.textContent = '¡Salud! (Tomar Shots) 🍹';
+        this.els.btnCompleted.classList.remove('hidden');
+        this.els.btnShot.classList.add('hidden');
         if (this.els.btnUseImmunity) this.els.btnUseImmunity.classList.add('hidden');
       } else if (card.specialType === 'el_juicio') {
-        this.els.btnCompleted.textContent = '¡Cumplido! ✅';
+        this.els.btnCompleted.textContent = '¡Juicio Cumplido! ✅';
         this.els.btnCompleted.classList.remove('hidden');
         this.els.btnShot.textContent = 'Me Rindo (Shot) 🍹';
         this.els.btnShot.classList.remove('hidden');
@@ -730,7 +730,35 @@ const UI = {
   _renderTurn() {
     const name = Game.getCurrentPlayer();
     this.els.turnName.textContent = name;
-    this.els.turnAvatar.textContent = name.charAt(0).toUpperCase();
+    this.els.turnAvatar.textContent = name ? name.charAt(0).toUpperCase() : '?';
+
+    const isMyTurn = !Game.isSocketMode || (Game.myPlayerName && Game.myPlayerName.toLowerCase() === (name || '').toLowerCase());
+
+    const noticeEl = document.getElementById('turn-forced-notice');
+    const waitNoticeEl = document.getElementById('wait-turn-notice');
+
+    if (Game.isSocketMode && !isMyTurn) {
+      this.els.btnVerdad.disabled = true;
+      this.els.btnReto.disabled = true;
+      this.els.btnVerdad.classList.add('disabled-forced');
+      this.els.btnReto.classList.add('disabled-forced');
+
+      if (waitNoticeEl) {
+        waitNoticeEl.innerHTML = `⏳ Es el turno de <strong>${name}</strong>.<br>Esperando que elija Verdad o Reto...`;
+        waitNoticeEl.classList.remove('hidden');
+      }
+      if (noticeEl) noticeEl.classList.add('hidden');
+
+      const turnCardDisabled = document.querySelector('.turn-card');
+      if (turnCardDisabled) {
+        turnCardDisabled.classList.remove('turn-enter');
+        void turnCardDisabled.offsetWidth;
+        turnCardDisabled.classList.add('turn-enter');
+      }
+      return;
+    } else {
+      if (waitNoticeEl) waitNoticeEl.classList.add('hidden');
+    }
 
     const immunityCount = Game.getImmunity(name);
     if (this.els.turnImmunityBadge) {
@@ -743,7 +771,6 @@ const UI = {
     }
 
     const forced = Game.getForcedChoice(name);
-    const noticeEl = document.getElementById('turn-forced-notice');
 
     this.els.btnVerdad.classList.remove('disabled-forced', 'pulse-forced');
     this.els.btnReto.classList.remove('disabled-forced', 'pulse-forced');
@@ -755,7 +782,7 @@ const UI = {
       this.els.btnReto.classList.add('pulse-forced');
 
       if (noticeEl) {
-        noticeEl.textContent = `⚡ ¡OBLIGATORIO PARA ${name.toUpperCase()}: RETO! (Eligió Verdad 2 veces seguidas)`;
+        noticeEl.textContent = `⚡ ¡OBLIGATORIO PARA ${(name || '').toUpperCase()}: RETO! (Eligió Verdad 2 veces seguidas)`;
         noticeEl.classList.remove('hidden');
       }
     } else if (forced === 'verdad') {
@@ -765,7 +792,7 @@ const UI = {
       this.els.btnVerdad.classList.add('pulse-forced');
 
       if (noticeEl) {
-        noticeEl.textContent = `🔮 ¡OBLIGATORIO PARA ${name.toUpperCase()}: VERDAD! (Eligió Reto 2 veces seguidas)`;
+        noticeEl.textContent = `🔮 ¡OBLIGATORIO PARA ${(name || '').toUpperCase()}: VERDAD! (Eligió Reto 2 veces seguidas)`;
         noticeEl.classList.remove('hidden');
       }
     } else {

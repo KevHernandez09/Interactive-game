@@ -453,6 +453,26 @@ body::before {
   100% { box-shadow: 0 0 25px rgba(251, 191, 36, 0.6); }
 }
 
+.wait-notice {
+  background: rgba(0, 212, 255, 0.12);
+  border: 1px solid rgba(0, 212, 255, 0.4);
+  color: var(--neon-cyan);
+  font-size: 0.9rem;
+  font-weight: 600;
+  padding: 12px 16px;
+  border-radius: var(--radius-sm);
+  margin-bottom: 16px;
+  width: 100%;
+  text-align: center;
+  backdrop-filter: blur(10px);
+  animation: pulseGlowCyan 2s infinite alternate;
+}
+
+@keyframes pulseGlowCyan {
+  0% { box-shadow: 0 0 10px rgba(0, 212, 255, 0.2); }
+  100% { box-shadow: 0 0 25px rgba(0, 212, 255, 0.5); }
+}
+
 .btn-choice.disabled-forced {
   opacity: 0.3 !important;
   cursor: not-allowed !important;
